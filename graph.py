@@ -38,6 +38,7 @@ class Graph:
 
     def __init__(self):
         self.vertices = {}
+        self.toExplore = set(self.vertices.keys())
 
     def add_vertex(self, vertex_id):
         """
@@ -78,6 +79,7 @@ class Graph:
             v = q.dequeue()
 
             if v not in visited:
+                #     self.toExplore.remove(v)
 
                 # Visit
                 print(v)
@@ -132,7 +134,7 @@ class Graph:
             for next_node in self.get_neighbors(starting_vertex):
                 self.dft_recursive(next_node, visited)
 
-    def bfs(self, starting_vertex, destination_vertex):
+    def bfs_order(self, starting_vertex):
         """
         Return a list containing the shortest path from
         starting_vertex to destination_vertex in
@@ -140,7 +142,7 @@ class Graph:
         """
 
         # Keep track of visited vertices
-        visited = set()
+        visited = []
 
         # Create an empty queue and enqueue with the starting vertex ID
         q = Queue()
@@ -154,7 +156,44 @@ class Graph:
 
             if currentNode not in visited:
 
-                visited.add(currentNode)
+                visited.append(currentNode)
+                # self.toExplore.remove(currentNode)
+
+                if len(visited) == 500:
+                    return visited
+
+                # Add all of its neighbors to the back of the queue
+                for next_vert in self.get_neighbors(currentNode):
+                    pathCopy = list(path)
+                    pathCopy.append(next_vert)
+                    q.enqueue(pathCopy)
+        return None
+
+    def bfs_path(self, starting_vertex, destination_vertex):
+        """
+        Return a list containing the shortest path from
+        starting_vertex to destination_vertex in
+        breadth-first order.
+        """
+
+        # Keep track of visited vertices
+        visited = []
+
+        # Create an empty queue and enqueue with the starting vertex ID
+        q = Queue()
+        q.enqueue([starting_vertex])
+
+        # While the queue is not empty
+        while q.size() > 0:
+            # Pop the front of the queue
+            path = q.dequeue()
+            currentNode = path[-1]
+
+            if currentNode not in visited:
+
+                visited.append(currentNode)
+                # self.toExplore.remove(currentNode)
+
                 if currentNode == destination_vertex:
                     return path
 
